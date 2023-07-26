@@ -19,13 +19,19 @@ def init_sso(app):
     @app.route("/login", methods=["GET", "POST"])
     @open_id.loginhandler
     def login():
+        app.logger.critical("receive login request")
         if "openid" in flask.session:
+            app.logger.critical(f"{open_id.get_next_url()=}")
             return flask.redirect(open_id.get_next_url())
 
         teams_request = TeamsRequest(query_membership=SSO_TEAMS)
-        return open_id.try_login(
+        try_login = open_id.try_login(
             SSO_LOGIN_URL, ask_for=["email"], extensions=[teams_request]
         )
+        app.logger.critical(f"{try_login=}")
+        app.logger.critical(f"{try_login.headers}")
+        app.logger.critical(f"{SSO_LOGIN_URL=}")
+        return try_login
 
     @open_id.after_login
     def after_login(resp):
