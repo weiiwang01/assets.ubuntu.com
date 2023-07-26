@@ -6,7 +6,7 @@ from flask_openid import OpenID
 
 
 SSO_LOGIN_URL = "https://login.ubuntu.com"
-SSO_TEAM = "canonical-content-people"
+SSO_TEAMS = ["canonical-content-people", "canonical-is-devops"]
 
 
 def init_sso(app):
@@ -22,14 +22,14 @@ def init_sso(app):
         if "openid" in flask.session:
             return flask.redirect(open_id.get_next_url())
 
-        teams_request = TeamsRequest(query_membership=[SSO_TEAM])
+        teams_request = TeamsRequest(query_membership=SSO_TEAMS)
         return open_id.try_login(
             SSO_LOGIN_URL, ask_for=["email"], extensions=[teams_request]
         )
 
     @open_id.after_login
     def after_login(resp):
-        if SSO_TEAM not in resp.extensions["lp"].is_member:
+        if not any(team not in resp.extensions["lp"].is_member for team in SSO_TEAMS):
             flask.abort(403)
 
         flask.session["openid"] = {
