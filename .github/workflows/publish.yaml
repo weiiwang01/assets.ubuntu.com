@@ -29,11 +29,35 @@ jobs:
           repository: weiiwang01/rockcraft
           path: rockcraft
 
+      - name: Rockcraft Git Hash
+        id: rockcraft-git
+        working-directory: ./rockcraft
+        run: |
+          run: echo "SHA=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore Rockcraft Snap Cache
+        id: cache-rockcraft-snap
+        uses: actions/cache/restore@v3
+        with:
+          path: ./rockcraft/rockcraft*.snap
+          key: rockcraft-${{ steps.rockcraft-git.SHA }}.snap
+
       - name: Build rockcraft
+        if: steps.cache.cache-rockcraft-snap.cache-hit != 'true'
         working-directory: ./rockcraft
         run: |
           sudo snap install snapcraft --classic
           snapcraft --use-lxd
+
+      - name: Cache Rockcraft Snap Cache
+        uses: actions/cache/save@v3
+        with:
+          path: ./rockcraft/rockcraft*.snap
+          key: ${{ steps.cache-rockcraft-snap.outputs.cache-primary-key }}
+
+      - name: Install Rockcraft
+        working-directory: ./rockcraft
+        run: |
           sudo snap install rockcraft*.snap --classic --dangerous
 
       - name: Build Rock image
