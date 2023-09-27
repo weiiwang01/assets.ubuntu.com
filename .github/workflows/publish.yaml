@@ -1,0 +1,53 @@
+name: Build and Publish
+
+on:
+  push:
+
+jobs:
+  container:
+    name: Build and Publish Rock Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+
+      - name: Build Assets
+        run: |
+          yarn install
+          yarn run build-css
+
+      - name: Setup LXD
+        uses: canonical/setup-lxd@main
+
+      - name: Checkout Rockcraft
+        uses: actions/checkout@v2
+        with:
+          repository: weiiwang01/rockcraft
+          path: rockcraft
+
+      - name: Build rockcraft
+        working-directory: ./rockcraft
+        run: |
+          sudo snap install snapcraft --classic
+          snapcraft --use-lxd
+          sudo snap install rockcraft*.snap --classic --dangerous
+
+      - name: Build Rock image
+        run: |
+          rockcraft pack
+          skopeo --insecure-policy copy oci-archive:assets-canonical-com_0.1_amd64.rock docker-daemon:ghrc.io/weiiwang01/assets-canonical-com:$(git rev-parse --short HEAD)
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push image
+        run: |
+          docker push ghrc.io/weiiwang01/assets-canonical-com:$(git rev-parse --short HEAD)
