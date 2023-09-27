@@ -7,9 +7,6 @@ version: "0.1"
 base: ubuntu:20.04
 license: Apache-2.0
 
-extensions:
-  - flask
-
 parts:
   apt-dependencies:
     plugin: nil
@@ -38,3 +35,15 @@ parts:
       - libpq-dev
     overlay-packages:
       - ca-certificates
+
+  flask/install-app:
+    prime:
+      - flask/app/static
+      - flask/app/.env
+      - flask/app/webapp
+      - flask/app/templates
+      - flask/app/migrate
+      - flask/app/app.py
+
+extensions:
+  - flask-framework
