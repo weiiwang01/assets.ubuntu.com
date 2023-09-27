@@ -68,5 +68,5 @@ jobs:
         run: >-
           skopeo --insecure-policy copy
           oci-archive:assets-canonical-com_0.1_amd64.rock
-          docker://ghcr.io/${{ github.repository_owner }}/assets.canonical.com:$(git rev-parse --short HEAD)
-          --dest-creds "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}"
+          docker://weiiwang01/assets.ubuntu.com:$(git rev-parse --short HEAD)
+          --dest-creds "weiiwang01:${{ secrets.DOCKERHUB_TOKEN }}"
