@@ -39,10 +39,10 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           path: ./rockcraft/rockcraft*.snap
-          key: rockcraft-${{ steps.rockcraft-git.SHA }}.snap
+          key: rockcraft-${{ steps.rockcraft-git.outputs.SHA }}.snap
 
       - name: Build Rockcraft
-        if: steps.cache.cache-rockcraft-snap.cache-hit != 'true'
+        if: steps.cache-rockcraft-snap.outputs.cache-hit != 'true'
         working-directory: ./rockcraft
         run: |
           sudo snap install snapcraft --classic
@@ -66,7 +66,7 @@ jobs:
 
       - name: Publish Rock Image
         run: >-
-          skopeo --insecure-policy copy 
-            oci-archive:assets-canonical-com_0.1_amd64.rock
-            docker:ghcr.io/${{ github.repository_owner }}/assets.canonical.com:$(git rev-parse --short HEAD)
-            --dest-creds "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}"
+          skopeo --insecure-policy copy
+          oci-archive:assets-canonical-com_0.1_amd64.rock
+          docker:ghcr.io/${{ github.repository_owner }}/assets.canonical.com:$(git rev-parse --short HEAD)
+          --dest-creds "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}"
