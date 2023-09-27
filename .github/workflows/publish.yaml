@@ -40,6 +40,9 @@ jobs:
         run: |
           export ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true
           rockcraft pack
-          skopeo --insecure-policy copy oci-archive:assets-canonical-com_0.1_amd64.rock \
-            docker://ghrc.io/${{ github.repository_owner }}/assets.canonical.com:$(git rev-parse --short HEAD) \
+      - name: Publish Rock Image
+        run: >-
+          skopeo --insecure-policy copy 
+            oci-archive:assets-canonical-com_0.1_amd64.rock
+            docker://ghcr.io/${{ github.repository_owner }}/assets.canonical.com:$(git rev-parse --short HEAD)
             --dest-creds "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}"
