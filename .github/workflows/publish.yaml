@@ -32,8 +32,7 @@ jobs:
       - name: Rockcraft Git Hash
         id: rockcraft-git
         working-directory: ./rockcraft
-        run: |
-          run: echo "SHA=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+        run: echo "SHA=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Restore Rockcraft Snap Cache
         id: cache-rockcraft-snap
@@ -42,7 +41,7 @@ jobs:
           path: ./rockcraft/rockcraft*.snap
           key: rockcraft-${{ steps.rockcraft-git.SHA }}.snap
 
-      - name: Build rockcraft
+      - name: Build Rockcraft
         if: steps.cache.cache-rockcraft-snap.cache-hit != 'true'
         working-directory: ./rockcraft
         run: |
@@ -60,10 +59,11 @@ jobs:
         run: |
           sudo snap install rockcraft*.snap --classic --dangerous
 
-      - name: Build Rock image
+      - name: Build Rock Image
         run: |
           export ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true
           rockcraft pack
+
       - name: Publish Rock Image
         run: >-
           skopeo --insecure-policy copy 
