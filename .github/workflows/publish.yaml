@@ -38,6 +38,7 @@ jobs:
 
       - name: Build Rock image
         run: |
+          ROCKCRAFT_ENABLE_EXPERIMENTAL_EXTENSIONS=true
           rockcraft pack
           skopeo --insecure-policy copy oci-archive:assets-canonical-com_0.1_amd64.rock docker-daemon:ghrc.io/weiiwang01/assets-canonical-com:$(git rev-parse --short HEAD)
 
