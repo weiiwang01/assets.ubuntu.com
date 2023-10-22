@@ -44,6 +44,7 @@ parts:
       - flask/app/templates
       - flask/app/migrate
       - flask/app/app.py
+      - flask/app/alembic.ini
 
 extensions:
   - flask-framework
