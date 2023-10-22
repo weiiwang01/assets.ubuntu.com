@@ -1,6 +1,6 @@
 # Copyright 2023 Canonical Ltd.
 # See LICENSE file for licensing details.
-name: assets-canonical-com
+name: assets-ubuntu-com
 summary: OCI image for the assets.canonical.com site.
 description: OCI image for the assets.canonical.com site.
 version: "0.1"
